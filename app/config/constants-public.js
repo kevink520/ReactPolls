@@ -1,7 +1,7 @@
 import firebase from 'firebase'
 
 firebase.initializeApp({
-  apiKey: "AIzaSyB-P2uGdC7ZZz-gz4MkwMb8AI5XdAjDV0w",
+  apiKey: "",
   authDomain: "reactpolls-3796f.firebaseapp.com",
   databaseURL: "https://reactpolls-3796f.firebaseio.com",
   projectId: "reactpolls-3796f",
