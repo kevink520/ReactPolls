@@ -1,11 +1,13 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import { TouchableOpacity, Text } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
+import { colors } from '~/styles'
 
 NewPollIcon.propTypes = {
   size: PropTypes.number.isRequired,
-  style: PropTypes.object,
   onPress: PropTypes.func.isRequired,
+  style: PropTypes.object,
 }
 
 NewPollIcon.defaultProps = {
@@ -15,7 +17,7 @@ NewPollIcon.defaultProps = {
 export default function NewPollIcon (props) {
   return (
     <TouchableOpacity onPress={props.onPress} style={props.style}>
-      <Text size={props.size}>+</Text>
+      <Text style={{fontSize: props.size, color: colors.white}}>+</Text>
     </TouchableOpacity>
   )
 }

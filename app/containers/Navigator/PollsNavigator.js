@@ -1,5 +1,7 @@
-import React, { PropTypes, Component } from 'react'
-import { Navigator, Platform } from 'react-native'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import { Platform } from 'react-native'
+import { Navigator } from 'react-native-deprecated-custom-components'
 import { SplashContainer, FooterTabsContainer, NewPollContainer } from '~/containers'
 
 export default class PollsNavigator extends Component {

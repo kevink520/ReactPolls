@@ -1,5 +1,7 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import { TouchableOpacity, Text } from 'react-native'
+import { colors } from '~/styles'
 
 TextButton.propTypes = {
   text: PropTypes.string.isRequired,
@@ -10,7 +12,7 @@ TextButton.propTypes = {
 export default function TextButton (props) {
   return (
     <TouchableOpacity onPress={props.onPress} style={props.style}>
-      <Text>
+      <Text style={{color: colors.white}}>
         {props.text}
       </Text>
     </TouchableOpacity>

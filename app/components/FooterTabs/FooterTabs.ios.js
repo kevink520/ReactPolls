@@ -1,7 +1,9 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import { TabBarIOS, Text, StyleSheet } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { HomeContainer, YourPollsContainer } from '~/containers'
+import { colors } from '~/styles'
 
 FooterTabs.propTypes = {
   activeFooterTab: PropTypes.string.isRequired,
@@ -11,7 +13,10 @@ FooterTabs.propTypes = {
 
 export default function FooterTabs (props) {
   return (
-    <TabBarIOS>
+    <TabBarIOS 
+      barTintColor={colors.black}
+      tintColor={colors.pink2}
+      unselectedItemTintColor={colors.white}>
       <Icon.TabBarItem
         iconSize={35}
         iconName='ios-home-outline'

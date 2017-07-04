@@ -1,4 +1,5 @@
-import React, { PropTypes, Component } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import { View, StyleSheet, Text, Image, Dimensions } from 'react-native'
 import { LoginButton } from 'react-native-fbsdk'
 import { colors, fontSizes } from '~/styles'

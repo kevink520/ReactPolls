@@ -1,6 +1,8 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import { View, StyleSheet, Platform, Dimensions } from 'react-native'
 import NavigationBar from 'react-native-navbar'
+import { colors } from '~/styles'
 
 NavBar.propTypes = {
   title: PropTypes.string.isRequired,
@@ -14,19 +16,20 @@ export default function NavBar (props) {
     style: {
       marginLeft: 10,
       justifyContent: 'center',
-    }
+    },
   }))
   props.rightButton && (optionalAttr.rightButton = React.cloneElement(props.rightButton, {
     style: {
       marginRight: 10,
       justifyContent: 'center',
-    }
+    },
   }))
   return (
     <NavigationBar
       {...optionalAttr}
         style={Platform.OS === 'android' ? [{marginTop: 0, marginBottom: 0}, styles.navbar] : styles.navbar}
-        title={{title: props.title}} />
+        title={{title: props.title, tintColor: colors.white}}
+        tintColor={colors.black} />
   )
 }
 

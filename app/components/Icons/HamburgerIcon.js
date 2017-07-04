@@ -1,11 +1,13 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import { TouchableOpacity } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
+import { colors } from '~/styles'
 
 HamburgerIcon.propTypes = {
   size: PropTypes.number.isRequired,
-  style: PropTypes.object,
   onPress: PropTypes.func.isRequired,
+  style: PropTypes.object,
 }
 
 HamburgerIcon.defaultProps = {
@@ -17,7 +19,8 @@ export default function HamburgerIcon (props) {
     <TouchableOpacity onPress={props.onPress} style={props.style}>
       <Icon
         name="ios-menu-outline"
-        size={props.size} />
+        size={props.size}
+        color={colors.white} />
     </TouchableOpacity>
   )
 }

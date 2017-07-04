@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import { View, Image, Text, StyleSheet, Platform, Dimensions } from 'react-native'
 import { NavBar, HamburgerIcon, NewPollIcon } from '~/components'
 const valleyBg = require('~/images/valley-bg.jpg')
@@ -15,7 +16,7 @@ export default function Home(props) {
         <NavBar
           title="All Polls"
           leftButton={Platform.OS === 'android' ? <HamburgerIcon onPress={props.openDrawer} /> : null}
-          rightButton={<NewPollIcon onPress={props.handleToNewPoll} />} />
+          rightButton={<NewPollIcon onPress={props.handleToNewPoll} size={30} />} />
         <Text style={styles.placeholderTitle}>
           Home
         </Text>

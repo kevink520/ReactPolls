@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import { View, Image, Text, StyleSheet, Platform, Dimensions } from 'react-native'
 import { NavBar, HamburgerIcon, NewPollIcon } from '~/components'
 const valleyBg = require('~/images/valley-bg.jpg')
