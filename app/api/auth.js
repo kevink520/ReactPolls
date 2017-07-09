@@ -13,3 +13,13 @@ export function authWithToken (accessToken) {
 export function updateUser (user) {
   return ref.child(`users/${user.uid}`).set(user)
 }
+
+export function logout () {
+  return firebaseAuth().signOut()
+}
+
+export function saveUser (user) {
+  return ref.child(`users/${user.uid}`)
+    .set(user)
+    .then(() => user)
+}
