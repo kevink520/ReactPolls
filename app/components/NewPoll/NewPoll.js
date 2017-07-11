@@ -96,7 +96,7 @@ export default class NewPoll extends Component {
       }
 
       this.props.dispatch(pollFanout(poll, this.state.ds))
-      //this.props.closeNewPollView()
+      this.props.closeNewPollView()
     }
   }
 

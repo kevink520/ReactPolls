@@ -1,4 +1,6 @@
 import { getAccessToken, authWithToken, updateUser } from '~/api/auth'
+import { fetchAndSetPollsListener } from './polls'
+import { fetchAndSetUsersListener } from './users'
 
 const AUTHENTICATING = 'AUTHENTICATING'
 const NOT_AUTHED = 'NOT_AUTHED'
@@ -45,7 +47,11 @@ export function onAuthChange (user) {
         displayName,
         photoURL,
       })
-      .then(() => dispatch(isAuthed(uid)))
+      .then(() => {
+        dispatch(isAuthed(uid))
+        dispatch(fetchAndSetPollsListener(uid))
+        dispatch(fetchAndSetUsersListener())
+      })
     }
   }
 }

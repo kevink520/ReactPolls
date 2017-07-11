@@ -1,37 +1,51 @@
-import { savePoll, fetchPoll } from '~/api/polls'
-import { addSingleUsersPoll } from './usersPolls'
+import { listenToPolls, savePoll, fetchPoll } from '~/api/polls'
+import { fetchAndHandleUsersPolls, addSingleUsersPoll } from './usersPolls'
 import { addAndHandleMultipleOptions } from './options'
 
-const FETCHING_POLL = 'FETCHING_POLL'
-const FETCHING_POLL_SUCCESS = 'FETCHING_POLL_SUCCESS'
-const FETCHING_POLL_ERROR = 'FETCHING_POLL_ERROR'
-const ADD_POLL = 'ADD_POLL'
-const ADD_MULTIPLE_POLLS = 'ADD_MULTIPLE_POLLS'
+const SETTING_POLLS_LISTENER = 'SETTING_POLLS_LISTENER'
+const SETTING_POLLS_LISTENER_ERROR = 'SETTING_POLLS_LISTENER_ERROR'
+const SETTING_POLLS_LISTENER_SUCCESS = 'SETTING_POLLS_LISTENER_SUCCESS'
+const ADD_POLLS_LISTENER = 'ADD_POLLS_LISTENER'
 
-function fetchingPoll () {
+function settingPollsListener () {
   return {
-    type: FETCHING_POLL,
+    type: SETTING_POLLS_LISTENER,
   }
 }
 
-function fetchingPollSuccess (poll) {
+function settingPollsListenerError (error) {
   return {
-    type: FETCHING_POLL_SUCCESS,
-    poll,
+    type: SETTING_POLLS_LISTENER_ERROR,
+    error: 'Error setting and fetching polls listener.',
   }
 }
 
-function fetchingPollError (error) {
+function settingPollsListenerSuccess (pollsAndIds) {
   return {
-    type: FETCHING_POLL_ERROR,
-    error,
+    type: SETTING_POLLS_LISTENER_SUCCESS,
+    polls: pollsAndIds.polls,
+    pollIds: pollsAndIds.sortedIds,
   }
 }
 
-function addPoll (poll) {
+function addPollsListener () {
   return {
-    type: ADD_POLL,
-    poll,
+    type: ADD_POLLS_LISTENER,
+  }
+}
+
+export function fetchAndSetPollsListener (authedId) {
+  return function (dispatch) {
+    let pollsListenerSet = false
+    dispatch(settingPollsListener())
+    listenToPolls(pollsAndIds => {
+      dispatch(settingPollsListenerSuccess(pollsAndIds))
+      dispatch(fetchAndHandleUsersPolls(authedId))
+    }, error => dispatch(fetchingPollError(error)))
+    if (!pollsListenerSet) {
+      dispatch(addPollsListener())
+      pollsListenerSet = true
+    }
   }
 }
 
@@ -40,66 +54,46 @@ export function pollFanout (poll, options) {
     const uid = getState().authentication.authedId
     savePoll(poll)
       .then((pollWithId) => {
-        dispatch(addPoll(pollWithId))
-        dispatch(addSingleUsersPoll(uid, pollWithId.pollId))
         dispatch(addAndHandleMultipleOptions(pollWithId.pollId, options))
       })
       .catch(err => console.warn('Error in pollFanout', err))
   } 
 }
 
-export function addMultiplePolls (polls) {
-  return {
-    type: ADD_MULTIPLE_POLLS,
-    polls,
-  }
-}
-
-export function fetchAndHandlePoll (pollId) {
-  dispatch(fetchingPoll())
-  fetchPoll(pollId)
-    .then(poll => dispatch(fetchingPollSuccess(poll)))
-    .catch(error => dispatch(fetchingPollError(error)))
-}
-
-function updatedPolls (state = {}, action) {
-  switch (action.type) {
-    case ADD_POLL :
-    case FETCHING_POLL_SUCCESS :
-      return {
-        ...state,
-        [action.poll.pollId]: action.poll,
-      }
-  }
-}
-
 const initialState = {
   isFetching: true,
   error: '',
   polls: {},
+  pollIds: [],
+  pollsListenerSet: false,
 }
 
 export default function polls (state = initialState, action) {
   switch (action.type) {
-    case FETCHING_POLL :
+    case SETTING_POLLS_LISTENER :
       return {
         ...state,
         isFetching: true,
       }
 
-    case ADD_POLL :
-    case FETCHING_POLL_SUCCESS :
-      return {
-        ...state,
-        isFetching: false,
-        polls: updatedPolls(state.polls, action),
-      }
-
-    case FETCHING_POLL_ERROR :
+    case SETTING_POLLS_LISTENER_ERROR :
       return {
         ...state,
         isFetching: false,
         error: action.error,
+      }
+
+    case SETTING_POLLS_LISTENER_SUCCESS :
+      return {
+        ...state,
+        polls: action.polls,
+        pollIds: action.pollIds,
+      }
+      
+    case ADD_POLLS_LISTENER :
+      return {
+        ...state,
+        pollsListenerSet: true,
       }
 
     default :

@@ -1,7 +1,5 @@
 export authentication from './modules/authentication'
 export activeFooterTab from './modules/activeFooterTab'
-export feed from './modules/feed'
-export listeners from './modules/listeners'
 export options from './modules/options'
 export polls from './modules/polls'
 export users from './modules/users'

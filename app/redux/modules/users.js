@@ -1,130 +1,76 @@
-import { fetchUser } from '~/api/users'
-import { logout } from '~/api/auth'
+import { listenToUsers } from '~/api/users'
 
-const AUTH_USER = 'AUTH_USER'
-const UNAUTH_USER = 'UNAUTH_USER'
-const FETCHING_USER = 'FETCHING_USER'
-const FETCHING_USER_FAILURE = 'FETCHING_USER_FAILURE'
-const FETCHING_USER_SUCCESS = 'FETCHING_USER_SUCCESS'
-const REMOVE_FETCHING_USER = 'REMOVE_FETCHING_USER'
+const SETTING_USERS_LISTENER = 'SETTING_USERS_LISTENER'
+const SETTING_USERS_LISTENER_FAILURE = 'SETTING_USERS_LISTENER_FAILURE'
+const SETTING_USERS_LISTENER_SUCCESS = 'SETTING_USERS_LISTENER_SUCCESS'
+const ADD_USERS_LISTENER = 'ADD_USERS_LISTENER'
 
-export function authUser (uid) {
+function settingUsersListener () {
   return {
-    type: AUTH_USER,
-    uid,
+    type: SETTING_USERS_LISTENER,
   }
 }
 
-function unauthUser () {
+function settingUsersListenerFailure (error) {
   return {
-    type: UNAUTH_USER,
-  }
-}
-
-function fetchingUser () {
-  return {
-    type: FETCHING_USER,
-  }
-}
-
-function fetchingUserFailure (error) {
-  return {
-    type: FETCHING_USER_FAILURE,
+    type: SETTING_USERS_LISTENER_FAILURE,
     error: error.message,
   }
 }
 
-export function fetchingUserSuccess (uid, user, timestamp) {
+function settingUsersListenerSuccess (users) {
   return {
-    type: FETCHING_USER_SUCCESS,
-    uid,
-    user,
-    timestamp,
+    type: SETTING_USERS_LISTENER_SUCCESS,
+    users,
   }
 }
 
-export function fetchAndHandleUser (uid) {
-  return function (dispatch) {
-    dispatch(fetchingUser())
-    return fetchUser(uid)
-      .then((user) => dispatch(fetchingUserSuccess(uid, user, Date.now())))
-      .catch((error) => dispatch(fetchingUserFailure(error)))
-  }
-}
-
-export function logoutAndUnauth () {
-  return function (dispatch) {
-    logout()
-    dispatch(unauthUser())
-  }
-}
-
-export function removeFetchingUser () {
+function addUsersListener () {
   return {
-    type: REMOVE_FETCHING_USER,
+    type: ADD_USERS_LISTENER,
   }
 }
 
-const initialUserState = {
-  lastUpdated: 0,
-  info: {
-    name: '',
-    uid: '',
-    avatar: '',
-  },
-}
+export function fetchAndSetUsersListener () {
+  return function (dispatch) {
+    let usersListenerSet = false
+    dispatch(settingUsersListener())
+    listenToUsers(
+      users => dispatch(settingUsersListenerSuccess(users)),
+      error => dispatch(settingUsersListenerFailure(error))
+    )
 
-function user(state = initialUserState, action) {
-  switch (action.type) {
-    case FETCHING_USER_SUCCESS:
-      return {
-        ...state,
-        info: action.user,
-        lastUpdated: action.timestamp,
-      };
-    default:
-      return state;
+    if (!usersListenerSet) {
+      dispatch(addUsersListener())
+      usersListenerSet = true
+    }
   }
 }
 
 const initialState = {
   isFetching: true,
   error: '',
-  isAuthed: false,
-  authedId: '',
+  users: {},
+  usersListenerSet: false,
 }
 
 export default function users(state = initialState, action) {
   switch (action.type) {
-    case AUTH_USER:
-      return {
-        ...state,
-        isAuthed: true,
-        authedId: action.uid,
-      }
-
-    case UNAUTH_USER:
-      return {
-        ...state,
-        isAuthed: false,
-        authedId: '',
-      }
-
-    case FETCHING_USER:
+    case SETTING_USERS_LISTENER :
       return {
         ...state,
         isFetching: true,
       }
 
-    case FETCHING_USER_FAILURE:
+    case SETTING_USERS_LISTENER_FAILURE :
       return {
         ...state,
         isFetching: false,
         error: action.error,
       }
 
-    case FETCHING_USER_SUCCESS:
-      return action.user === null 
+    case SETTING_USERS_LISTENER_SUCCESS :
+      return action.users === null 
         ? {
           ...state,
           isFetching: false,
@@ -134,15 +80,15 @@ export default function users(state = initialState, action) {
           ...state,
           isFetching: false,
           error: '',
-          [action.uid]: user(state[action.uid], action),
+          users: action.users,
         }
 
-    case REMOVE_FETCHING_USER:
-      return {
-        ...state,
-        isFetching: false,
-      }
-      
+      case ADD_USERS_LISTENER :
+        return {
+          ...state,
+          isFetching: false,
+          usersListenerSet: true,
+        }
     default:
       return state;
   }

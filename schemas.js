@@ -6,7 +6,6 @@ Firebase
     timestamp
     lastUpdated
     totalVotesCount
-    [options]
 
 /pollOptions
   pollId
@@ -22,12 +21,11 @@ Firebase
     uid
     name
     avatar
+    [{pollId, optionId}]
     
 /usersPolls
   uid
     pollIds
-    lastUpdated
-
 
 Redux
 .polls

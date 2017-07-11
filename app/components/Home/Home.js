@@ -1,15 +1,19 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { View, Image, Text, StyleSheet, Platform, Dimensions } from 'react-native'
-import { NavBar, HamburgerIcon, NewPollIcon } from '~/components'
+import { View, Image, ListView, StyleSheet, Platform, Dimensions } from 'react-native'
+import { NavBar, HamburgerIcon, NewPollIcon, PollPreview } from '~/components'
 const valleyBg = require('~/images/valley-bg.jpg')
 
 Home.propTypes = {
   openDrawer: PropTypes.func,
   handleToNewPoll: PropTypes.func.isRequired,
+  dataSource: PropTypes.object.isRequired,
+  //renderRow: PropTypes.func.isRequired,
+  users: PropTypes.object.isRequired,
 }
 
 export default function Home(props) {
+  console.log(props.users)
   return (
     <Image source={valleyBg} style={styles.fullScreen}>
       <View style={styles.container}>
@@ -17,15 +21,18 @@ export default function Home(props) {
           title="All Polls"
           leftButton={Platform.OS === 'android' ? <HamburgerIcon onPress={props.openDrawer} /> : null}
           rightButton={<NewPollIcon onPress={props.handleToNewPoll} size={30} />} />
-        <Text style={styles.placeholderTitle}>
-          Home
-        </Text>
+        {Object.keys(props.users).length > 0
+          ? <ListView 
+              dataSource={props.dataSource}
+              renderRow={rowData => <PollPreview poll={rowData} user={props.users[rowData.uid]} />}
+              style={styles.pollsList} />
+          : null}
       </View>
     </Image>
   )
 }
 
-const { height } = Dimensions.get('window')
+const { width, height } = Dimensions.get('window')
 
 const styles = StyleSheet.create({
   fullScreen: {
@@ -40,15 +47,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
     alignItems: 'center',
+    position: 'relative',
   },
 
-  placeholderTitle: {
-    alignItems: 'center',
-    marginBottom: height / 2,
-    backgroundColor: 'transparent',
-    fontFamily: 'Karla',
-    fontSize: 50,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  }
+  pollsList: {
+    position: 'absolute',
+    bottom: 50,
+    width: width - 60,
+    minHeight: height * 0.62,
+    maxHeight: height - 145,
+    paddingTop: 15,
+    paddingBottom: 15,
+    backgroundColor: '#ffffff',
+  },
 })

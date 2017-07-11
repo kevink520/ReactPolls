@@ -1,6 +1,8 @@
 import { ref } from '~/config/constants'
 
-export function fetchUser (uid) {
-  return ref.child(`users/${uid}`).once('value')
-    .then((snapshot) => snapshot.val())
+export function listenToUsers (cb, errorCB) {
+  ref.child('users').on('value', (snapshot) => {
+    const users = snapshot.val() || {}
+    cb(users)
+  }, errorCB)
 }

@@ -54,9 +54,9 @@ function removeOption (optionId, pollId) {
 export function addAndHandleOption (pollId, option) {
   return function (dispatch) {
     const { optionWithId, optionPromise } = postOption(pollId, option)
-    dispatch(addOption(pollId, optionWithId))
+    //dispatch(addOption(pollId, optionWithId))
     optionPromise.catch((error) => {
-      dispatch(removeOption(optionWithId.optionId, pollId))
+      //dispatch(removeOption(optionWithId.optionId, pollId))
       dispatch(addOptionError(error))
     })
   }

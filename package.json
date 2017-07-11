@@ -27,7 +27,7 @@
     "babel-root-import": "^4.1.8",
     "jest": "19.0.2",
     "react-test-renderer": "16.0.0-alpha.6",
-    "remote-redux-devtools": "^0.5.10"
+    "remote-redux-devtools": "^0.5.12"
   },
   "jest": {
     "preset": "react-native"
